@@ -16,7 +16,7 @@ export const getCards = (req: Request, res: Response, next: NextFunction) =>
 export const createCard = (req: Request & { user?: { _id: string } }, res: Response, next: NextFunction) => {
   const { name, link } = req.body;
   return CardModel.create({ name, link, owner: req?.user?._id })
-    .then((card) => res.send(card))
+    .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(err);
@@ -43,7 +43,11 @@ export const deleteCardId = (req: Request, res: Response, next: NextFunction) =>
     });
 
 export const likeCard = (req: Request & { user?: { _id: string } }, res: Response, next: NextFunction) =>
-  CardModel.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req?.user?._id } }, { new: true })
+  CardModel.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req?.user?._id } },
+    { new: true, runValidators: true },
+  )
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -54,7 +58,11 @@ export const likeCard = (req: Request & { user?: { _id: string } }, res: Respons
     });
 
 export const dislikeCard = (req: Request & { user?: { _id: string } }, res: Response, next: NextFunction) =>
-  CardModel.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req?.user?._id } }, { new: true })
+  CardModel.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req?.user?._id } },
+    { new: true, runValidators: true },
+  )
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {

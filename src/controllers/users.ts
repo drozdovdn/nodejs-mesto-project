@@ -32,7 +32,7 @@ export const getUserId = (req: Request, res: Response, next: NextFunction) =>
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
   const { name, about, avatar } = req.body;
   return UserModel.create({ name, about, avatar })
-    .then((user) => res.send(user))
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(err);
@@ -44,7 +44,7 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
 
 export const updateUser = (req: Request & { user?: { _id: string } }, res: Response, next: NextFunction) => {
   const { name, about } = req.body;
-  return UserModel.findByIdAndUpdate(req?.user?._id, { name, about }, { new: true })
+  return UserModel.findByIdAndUpdate(req?.user?._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -57,7 +57,7 @@ export const updateUser = (req: Request & { user?: { _id: string } }, res: Respo
 
 export const updateUserAvatar = (req: Request & { user?: { _id: string } }, res: Response, next: NextFunction) => {
   const { avatar } = req.body;
-  return UserModel.findByIdAndUpdate(req?.user?._id, { avatar }, { new: true })
+  return UserModel.findByIdAndUpdate(req?.user?._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
