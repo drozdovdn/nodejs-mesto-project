@@ -1,10 +1,11 @@
-import express, { Request, Response, NextFunction } from 'express';
-import mongoose from 'mongoose';
 import { errors } from 'celebrate';
-import { cardRouter, userRouter } from './routes';
-import NotFoundError from './errors/no-found-error';
+import express, { NextFunction, Request, Response } from 'express';
+import mongoose from 'mongoose';
+
 import { createUser, loginUser } from './controllers/auth';
+import NotFoundError from './errors/no-found-error';
 import auth from './middlewares/auth';
+import { cardRouter, userRouter } from './routes';
 
 const { PORT = 3000 } = process.env;
 

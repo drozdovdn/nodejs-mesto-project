@@ -1,7 +1,7 @@
+import { Joi, celebrate } from 'celebrate';
 import { Router } from 'express';
-import { celebrate, Joi } from 'celebrate';
 
-import { deleteCardId, dislikeCard, getCards, likeCard, createCard } from '../controllers/cards';
+import { createCard, deleteCardId, dislikeCard, getCards, likeCard } from '../controllers/cards';
 
 const cardRouter = Router();
 

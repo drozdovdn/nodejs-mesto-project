@@ -1,6 +1,7 @@
-import { celebrate, Joi } from 'celebrate';
+import { Joi, celebrate } from 'celebrate';
 import { Router } from 'express';
-import { getUsers, getUserId, updateUser, updateUserAvatar } from '../controllers/users';
+
+import { getUserId, getUsers, updateUser, updateUserAvatar } from '../controllers/users';
 
 const userRouter = Router();
 

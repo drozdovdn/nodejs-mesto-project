@@ -1,6 +1,6 @@
-import { Schema, model, Model, Document } from 'mongoose';
-import validator from 'validator';
 import bcrypt from 'bcryptjs';
+import { Document, Model, Schema, model } from 'mongoose';
+import validator from 'validator';
 
 export interface IUser {
   email: string;

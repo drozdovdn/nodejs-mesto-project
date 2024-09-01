@@ -1,6 +1,7 @@
+import bcrypt from 'bcryptjs';
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+
 import UserModel from '../models/user';
 
 export const loginUser = (req: Request, res: Response, next: NextFunction) => {

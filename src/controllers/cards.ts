@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import CardModel from '../models/card';
+
 import NotFoundError from '../errors/no-found-error';
+import CardModel from '../models/card';
 
 export const getCards = (req: Request, res: Response, next: NextFunction) =>
   CardModel.find({})

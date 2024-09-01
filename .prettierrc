@@ -3,7 +3,8 @@
   "trailingComma": "all",
   "tabWidth": 2,
   "singleQuote": true,
-  "importOrder": ["^components/(.*)$", "^[./]" ],
+  "importOrder": ["^src/(.*)$", "^[./]"],
   "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "importOrderSortSpecifiers": true,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"]
 }
