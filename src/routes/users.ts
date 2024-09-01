@@ -1,21 +1,10 @@
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
-import { getUsers, createUser, getUserId, updateUser, updateUserAvatar } from '../controllers/users';
+import { getUsers, getUserId, updateUser, updateUserAvatar } from '../controllers/users';
 
 const userRouter = Router();
 
 userRouter.get('/', getUsers);
-userRouter.post(
-  '/',
-  celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().required().min(2).max(30),
-      about: Joi.string().required().min(2).max(200),
-      avatar: Joi.string().required(),
-    }),
-  }),
-  createUser,
-);
 
 userRouter.get(
   '/:userId',
