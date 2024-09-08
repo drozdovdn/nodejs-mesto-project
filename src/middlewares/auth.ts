@@ -1,30 +1,24 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+import UnauthorizedError from '../errors/unauthorized-error';
+
 interface SessionRequest extends Request {
   user?: string | JwtPayload;
 }
 
-const handleAuthError = (res: Response) => {
-  res.status(401).send({ message: 'Необходима авторизация' });
-};
-
-const extractBearerToken = (header: string) => header.replace('Bearer ', '');
-
 export default (req: SessionRequest, res: Response, next: NextFunction) => {
-  const { authorization } = req.headers;
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return handleAuthError(res);
+  if (!req?.cookies?.jwt) {
+    throw new UnauthorizedError('Необходима авторизация');
   }
+  const token = req.cookies.jwt;
 
-  const token = extractBearerToken(authorization);
   let payload;
 
   try {
     payload = jwt.verify(token, 'super-strong-secret');
   } catch (err) {
-    return handleAuthError(res);
+    throw new UnauthorizedError('Необходима авторизация');
   }
 
   req.user = payload; // записываем пейлоуд в объект запроса

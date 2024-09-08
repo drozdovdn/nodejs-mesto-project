@@ -1,11 +1,12 @@
 import { Joi, celebrate } from 'celebrate';
 import { Router } from 'express';
 
-import { getUserId, getUsers, updateUser, updateUserAvatar } from '../controllers/users';
+import { getCurrentUser, getUserId, getUsers, updateUser, updateUserAvatar } from '../controllers/users';
 
 const userRouter = Router();
 
 userRouter.get('/', getUsers);
+userRouter.get('/me', getCurrentUser);
 
 userRouter.get(
   '/:userId',

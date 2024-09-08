@@ -30,6 +30,8 @@
     ]
   },
   "rules": {
+    "operator-linebreak": "off",
+    "import/prefer-default-export": "off",
     "max-len": "off",
     "no-unused-vars": "off",
     "spaced-comment": "off",

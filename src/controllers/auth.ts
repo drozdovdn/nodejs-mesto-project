@@ -8,36 +8,41 @@ export const loginUser = (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
   return UserModel.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
-      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }); // сохраняем в cookie на 7 дней
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }); //7d
+      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }).end(); // сохраняем в cookie на 7 дней
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      if (err.name === 'ValidationError') {
+        next(err);
+      } else {
+        next(err);
+      }
     });
 };
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
-  const { password, email, name, about, avatar } = req.body;
+  const { password, ...body } = req.body;
 
   return bcrypt
     .hash(password, 10)
     .then((hash) =>
       UserModel.create({
-        name,
-        about,
-        avatar,
-        email,
         password: hash,
+        ...body,
       }),
     )
     .then((user) => {
-      const { _id, email: emailUser } = user;
+      const { _id, email } = user;
       res.status(201).send({
         _id,
-        email: emailUser,
+        email,
       });
     })
     .catch((err) => {
-      res.status(400).send(err);
+      if (err.name === 'ValidationError') {
+        next(err);
+      } else {
+        next(err);
+      }
     });
 };

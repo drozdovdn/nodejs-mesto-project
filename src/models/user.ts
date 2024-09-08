@@ -2,6 +2,9 @@ import bcrypt from 'bcryptjs';
 import { Document, Model, Schema, model } from 'mongoose';
 import validator from 'validator';
 
+import UnauthorizedError from '../errors/unauthorized-error';
+import { urlPattern } from './helpers';
+
 export interface IUser {
   email: string;
   password: string;
@@ -44,6 +47,10 @@ const userSchema = new Schema<IUser, UserModel>({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: {
+      validator: (v: string) => urlPattern.test(v),
+      message: 'Неправильный формат ссылки',
+    },
   },
 });
 
@@ -52,12 +59,12 @@ userSchema.static('findUserByCredentials', function findUserByCredentials(email:
     .select('+password') //возвращаем пароль из базы, так как в схеме возврат заблокирован
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        throw new UnauthorizedError('Неправильные почта или пароль');
       }
 
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          return Promise.reject(new Error('Неправильные почта или пароль'));
+          throw new UnauthorizedError('Неправильные почта или пароль');
         }
 
         return user;
