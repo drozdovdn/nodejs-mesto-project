@@ -16,7 +16,7 @@ export default (req: SessionRequest, res: Response, next: NextFunction) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'super-strong-secret');
+    payload = jwt.verify(token, '01d56afa26f2584ac76ffd590f12970b988ad78127f7aa9536d81d7b91f23739');
   } catch (err) {
     throw new UnauthorizedError('Необходима авторизация');
   }

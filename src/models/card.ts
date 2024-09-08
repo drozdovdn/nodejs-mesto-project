@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose';
 import { urlPattern } from './helpers';
 import { IUser } from './user';
 
-interface ICard {
+export interface ICard {
   name: string;
   link: string;
   owner: IUser;

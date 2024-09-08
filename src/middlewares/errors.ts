@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import NotFoundError from '../errors/no-found-error';
 
 export const errorsServer = (
-  err: Error & { statusCode: number; code: number } & any,
+  err: Error & { statusCode: number; code: number },
   req: Request,
   res: Response,
   next: NextFunction,
@@ -15,13 +15,8 @@ export const errorsServer = (
     res.status(409).send({ message: 'Данный пользователь уже существует' });
   }
 
-  // if (err.code === 11000) {
-  //   //если пользователь хочет удалить чужую карточку
-  //   return res.status(403).send({ message: 'Не достаточно прав' });
-  // }
-
-  if (err.message.includes('Validation failed')) {
-    res.status(400).send({ message: err.message.replace('Validation failed: ', '') });
+  if (err.message.includes('failed')) {
+    res.status(400).send({ message: err.message });
   }
 
   res.status(statusCode).send({
