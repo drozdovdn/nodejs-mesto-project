@@ -7,6 +7,8 @@ interface SessionRequest extends Request {
   user?: string | JwtPayload;
 }
 
+const { JWT_SECRET = 'dev-secret' } = process.env;
+
 export default (req: SessionRequest, res: Response, next: NextFunction) => {
   if (!req?.cookies?.jwt) {
     throw new UnauthorizedError('Необходима авторизация');
@@ -16,7 +18,7 @@ export default (req: SessionRequest, res: Response, next: NextFunction) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, '01d56afa26f2584ac76ffd590f12970b988ad78127f7aa9536d81d7b91f23739');
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     throw new UnauthorizedError('Необходима авторизация');
   }

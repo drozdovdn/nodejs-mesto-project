@@ -8,25 +8,13 @@ import { RequestPayload } from '../types';
 export const getCards = (req: Request, res: Response, next: NextFunction) =>
   CardModel.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 
 export const createCard = (req: RequestPayload, res: Response, next: NextFunction) => {
   const { name, link } = req.body;
   return CardModel.create({ name, link, owner: req?.user?._id })
     .then((card) => res.status(201).send(card))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 export const deleteCardId = async (req: RequestPayload, res: Response, next: NextFunction) => {
@@ -44,21 +32,9 @@ export const deleteCardId = async (req: RequestPayload, res: Response, next: Nex
         .then(() => {
           res.send({ message: 'Карточка удалена' });
         })
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            next(err);
-          } else {
-            next(err);
-          }
-        });
+        .catch(next);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 export const likeCard = (req: RequestPayload, res: Response, next: NextFunction) =>
@@ -68,13 +44,7 @@ export const likeCard = (req: RequestPayload, res: Response, next: NextFunction)
     { new: true, runValidators: true },
   )
     .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 
 export const dislikeCard = (req: RequestPayload, res: Response, next: NextFunction) =>
   CardModel.findByIdAndUpdate(
@@ -83,10 +53,4 @@ export const dislikeCard = (req: RequestPayload, res: Response, next: NextFuncti
     { new: true, runValidators: true },
   )
     .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);

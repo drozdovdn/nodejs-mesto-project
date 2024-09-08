@@ -1,6 +1,7 @@
 import { Joi, celebrate, errors } from 'celebrate';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import express from 'express';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
@@ -10,6 +11,8 @@ import auth from './middlewares/auth';
 import { errorsNotFound, errorsServer } from './middlewares/errors';
 import { errorLogger, requestLogger } from './middlewares/logger';
 import { cardRouter, userRouter } from './routes';
+
+dotenv.config();
 
 const { PORT = 3000 } = process.env;
 

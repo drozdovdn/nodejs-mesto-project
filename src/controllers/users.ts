@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { NextFunction, Request, Response } from 'express';
 
 import NotFoundError from '../errors/no-found-error';
@@ -7,13 +8,7 @@ import { RequestPayload } from '../types';
 export const getUsers = (req: Request, res: Response, next: NextFunction) =>
   UserModel.find({})
     .then((users) => res.send(users))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 
 export const getUserId = (req: Request, res: Response, next: NextFunction) =>
   UserModel.findById(req.params.userId)
@@ -23,13 +18,7 @@ export const getUserId = (req: Request, res: Response, next: NextFunction) =>
       }
       res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 
 export const getCurrentUser = (req: RequestPayload, res: Response, next: NextFunction) =>
   UserModel.findById(req?.user?._id)
@@ -40,37 +29,37 @@ export const getCurrentUser = (req: RequestPayload, res: Response, next: NextFun
       }
       res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 
 export const updateUser = (req: RequestPayload, res: Response, next: NextFunction) => {
-  const { name, about } = req.body;
+  const { password, ...body } = req.body;
 
-  return UserModel.findByIdAndUpdate(req?.user?._id, { name, about }, { new: true, runValidators: true })
+  if (password) {
+    return bcrypt
+      .hash(password, 10)
+      .then((hash) =>
+        UserModel.findByIdAndUpdate(
+          req?.user?._id,
+          {
+            password: hash,
+            ...body,
+          },
+          { new: true, runValidators: true },
+        )
+          .then((user) => res.send(user))
+          .catch(next),
+      )
+      .catch(next);
+  }
+
+  return UserModel.findByIdAndUpdate(req?.user?._id, body, { new: true, runValidators: true })
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 export const updateUserAvatar = (req: RequestPayload, res: Response, next: NextFunction) => {
   const { avatar } = req.body;
   return UserModel.findByIdAndUpdate(req?.user?._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(err);
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
