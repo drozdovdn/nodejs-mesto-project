@@ -30,11 +30,14 @@
     ]
   },
   "rules": {
+    "operator-linebreak": "off",
+    "import/prefer-default-export": "off",
     "max-len": "off",
     "no-unused-vars": "off",
     "spaced-comment": "off",
     "implicit-arrow-linebreak": "off",
     "object-curly-newline": "off",
+    "function-paren-newline": "off",
     "no-underscore-dangle":  ["error", { "allow": ["_id"] }],
     "import/extensions": [
       "error",

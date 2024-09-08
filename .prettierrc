@@ -2,5 +2,9 @@
   "printWidth": 120,
   "trailingComma": "all",
   "tabWidth": 2,
-  "singleQuote": true
+  "singleQuote": true,
+  "importOrder": ["^src/(.*)$", "^[./]"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"]
 }

@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import CardModel from '../models/card';
+
+import ForbiddenError from '../errors/forbidden-error';
 import NotFoundError from '../errors/no-found-error';
+import CardModel from '../models/card';
+import { RequestPayload } from '../types';
 
 export const getCards = (req: Request, res: Response, next: NextFunction) =>
   CardModel.find({})
@@ -13,7 +16,7 @@ export const getCards = (req: Request, res: Response, next: NextFunction) =>
       }
     });
 
-export const createCard = (req: Request & { user?: { _id: string } }, res: Response, next: NextFunction) => {
+export const createCard = (req: RequestPayload, res: Response, next: NextFunction) => {
   const { name, link } = req.body;
   return CardModel.create({ name, link, owner: req?.user?._id })
     .then((card) => res.status(201).send(card))
@@ -26,13 +29,28 @@ export const createCard = (req: Request & { user?: { _id: string } }, res: Respo
     });
 };
 
-export const deleteCardId = (req: Request, res: Response, next: NextFunction) =>
-  CardModel.findByIdAndDelete(req.params.cardId)
+export const deleteCardId = async (req: RequestPayload, res: Response, next: NextFunction) => {
+  CardModel.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка не найдена');
       }
-      res.send({ message: 'Карточка удалена' });
+      if (String(card.owner) !== String(req?.user?._id)) {
+        throw new ForbiddenError('Недостаточно прав');
+      }
+
+      //Удаляю карточку
+      CardModel.deleteOne({ _id: card._id })
+        .then(() => {
+          res.send({ message: 'Карточка удалена' });
+        })
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            next(err);
+          } else {
+            next(err);
+          }
+        });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -41,8 +59,9 @@ export const deleteCardId = (req: Request, res: Response, next: NextFunction) =>
         next(err);
       }
     });
+};
 
-export const likeCard = (req: Request & { user?: { _id: string } }, res: Response, next: NextFunction) =>
+export const likeCard = (req: RequestPayload, res: Response, next: NextFunction) =>
   CardModel.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req?.user?._id } },
@@ -57,7 +76,7 @@ export const likeCard = (req: Request & { user?: { _id: string } }, res: Respons
       }
     });
 
-export const dislikeCard = (req: Request & { user?: { _id: string } }, res: Response, next: NextFunction) =>
+export const dislikeCard = (req: RequestPayload, res: Response, next: NextFunction) =>
   CardModel.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req?.user?._id } },
